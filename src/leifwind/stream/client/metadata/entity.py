@@ -172,7 +172,14 @@ class MetadataEntity(MetadataBase):
                 project_id=UUID,
                 **fragment_fields,
             )
-            entity_fields.update(fragment_fields)
+            # On the combined entity model, fragment fields are optional:
+            # an unpopulated fragment surfaces its columns as NULL
+            entity_fields.update(
+                {
+                    name: (python_type | None, None)
+                    for name, python_type in fragment_fields.items()
+                }
+            )
 
         self.pydantic_key_model = entity_key_model
         self.pydantic_fragment_models = fragment_models
