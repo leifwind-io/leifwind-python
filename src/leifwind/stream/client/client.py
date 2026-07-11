@@ -8,6 +8,7 @@ from typing import Any, AsyncGenerator, Dict, Protocol
 from uuid import UUID
 
 import httpx
+from pydantic import BaseModel, computed_field
 
 from .metadata import (
     DetailResponse,
@@ -16,6 +17,16 @@ from .metadata import (
     MetadataList,
     MetadataProject,
 )
+
+
+class HealthStatus(BaseModel):
+    status: str
+    version: str
+
+    @computed_field
+    @property
+    def ok(self) -> bool:
+        return self.status == "ok"
 
 
 class TokenProvider(Protocol):
@@ -442,6 +453,6 @@ class Leifwind:
         response.raise_for_status()
         return response
 
-    async def healthz(self) -> bool:
+    async def healthz(self) -> HealthStatus:
         response = await self._request("GET", "/healthz")
-        return response.status_code == 200 and response.json()["status"] == "ok"
+        return HealthStatus.model_validate(response.json())

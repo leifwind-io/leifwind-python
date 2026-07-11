@@ -6,6 +6,7 @@
 from .client import (
     BearerAuth,
     ClientCredentialsTokenProvider,
+    HealthStatus,
     Leifwind,
     StaticTokenProvider,
     TokenProvider,
@@ -14,6 +15,7 @@ from .client import (
 __all__ = [
     "BearerAuth",
     "ClientCredentialsTokenProvider",
+    "HealthStatus",
     "Leifwind",
     "StaticTokenProvider",
     "TokenProvider",
