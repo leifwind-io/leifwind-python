@@ -11,8 +11,9 @@ entity creation, field management, and Pydantic model generation.
 
 import abc
 import collections
+import hashlib
+import json
 from functools import cached_property
-from itertools import chain
 from typing import Any, ClassVar, Literal, Self, override
 from uuid import UUID
 
@@ -44,19 +45,33 @@ class InterfaceEntityKey(BaseModel, abc.ABC):
     @pydantic.computed_field
     @property
     def unique_key(self) -> str:
-        """Generate a unique key string for this entity key.
+        """Derive the stable unique key for this entity key.
 
-        The unique key is constructed by joining the project_id, entity_id,
-        and all non-restricted field values with colons.
+        SHA-256 over a canonical JSON serialization of project_id, entity_id
+        and the sorted KEY field values. Sorted field names plus pinned JSON
+        key order make the key deterministic across processes (the previous
+        ':'-join iterated a set, so it varied with PYTHONHASHSEED), and JSON
+        escaping makes it injective (values containing ':' collapsed distinct
+        composite keys onto one string). Values hash via str(), so textually
+        distinct but numerically equal inputs yield different keys - same
+        behavior as the previous join.
 
         Returns:
-            A string representation of the unique key
+            A 64-character lowercase hex digest (URL-path- and SQL-safe).
         """
         key_fields = set(type(self).model_fields.keys()) - RESTRICTED_FIELD_NAMES
-        return ":".join(
-            str(getattr(self, field))
-            for field in chain(["project_id", "entity_id"], key_fields)
+        canonical = json.dumps(
+            {
+                "project_id": str(self.project_id),
+                "entity_id": str(self.entity_id),
+                "key": {
+                    field: str(getattr(self, field)) for field in sorted(key_fields)
+                },
+            },
+            sort_keys=True,
+            separators=(",", ":"),
         )
+        return hashlib.sha256(canonical.encode("utf-8")).hexdigest()
 
 
 class MetadataEntity(MetadataBase):
