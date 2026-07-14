@@ -6,7 +6,7 @@ Python client for the Leifwind Stream metadata-driven REST API.
 
 ```
 pip install leifwind-stream-client \
-  --index-url https://gitlab.com/api/v4/projects/internal/packages/pypi/simple
+  --extra-index-url https://gitlab.com/api/v4/projects/internal/packages/pypi/simple
 ```
 
 ## Usage
