@@ -4,7 +4,7 @@
 
 """Field definitions and management for metadata entities."""
 
-from typing import Any, ClassVar, Final, Literal, Union
+from typing import Any, ClassVar, Final, Literal
 from uuid import UUID
 
 from pydantic import Field
@@ -24,18 +24,18 @@ from .field_types import (
 )
 
 # Type aliases for better readability
-FieldConfigType = Union[
-    MetadataFieldText,
-    MetadataFieldInteger,
-    MetadataFieldDecimal,
-    MetadataFieldBoolean,
-    MetadataFieldDate,
-    MetadataFieldTime,
-    MetadataFieldTimestamp,
-    MetadataFieldUUID,
-]
+FieldConfigType = (
+    MetadataFieldText
+    | MetadataFieldInteger
+    | MetadataFieldDecimal
+    | MetadataFieldBoolean
+    | MetadataFieldDate
+    | MetadataFieldTime
+    | MetadataFieldTimestamp
+    | MetadataFieldUUID
+)
 
-ConnectionType = Union[MetadataFieldConnectionFragment, MetadataFieldConnectionKey]
+ConnectionType = MetadataFieldConnectionFragment | MetadataFieldConnectionKey
 
 # Mapping from data type strings to their corresponding field type classes
 FIELD_TYPE_MAPPING: Final[dict[str, type[FieldConfigType]]] = {
@@ -80,7 +80,7 @@ class MetadataField(MetadataBase):
     connection_type: ConnectionType = Field(discriminator="connection_type")
 
     @classmethod
-    def parse_flat_db(cls, obj: dict[str, Any]) -> "MetadataField":
+    def parse_flat_db(cls, obj: dict[str, Any]) -> MetadataField:
         """Parse a flat database record into a MetadataField instance.
 
         This method reconstructs a MetadataField from a flattened database representation,

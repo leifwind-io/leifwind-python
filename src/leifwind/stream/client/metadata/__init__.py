@@ -34,8 +34,8 @@ from .field_types import (
 # Import from project module
 from .project import MetadataProject
 
-# Define __all__ to expose all public attributes
-__all__ = [
+# Define __all__ to expose all public attributes, grouped by source module
+__all__ = [  # noqa: RUF022
     # From base module
     "DetailResponse",
     "MetadataBase",

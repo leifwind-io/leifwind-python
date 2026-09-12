@@ -4,7 +4,8 @@
 
 import json
 import time
-from typing import Any, AsyncGenerator, Dict, Protocol
+from collections.abc import AsyncGenerator
+from typing import Any, Protocol
 from uuid import UUID
 
 import httpx
@@ -138,7 +139,7 @@ class Leifwind:
             self,
             project_id: UUID,
             entity_name: str | UUID,
-            key: Dict[str, Any] | UUID | str,
+            key: dict[str, Any] | UUID | str,
         ) -> str:
             params = {}
             params.update(key)
@@ -182,9 +183,9 @@ class Leifwind:
             project_id: UUID,
             entity_name: str | UUID,
             fragment_name: str,
-            entity: Dict[str, Any],
+            entity: dict[str, Any],
             dry_run: bool = False,
-        ) -> Dict[str, Any]:
+        ) -> dict[str, Any]:
             """
             Upsert a fragment to an entity.
 
@@ -264,7 +265,7 @@ class Leifwind:
 
         async def iter_entities(
             self, project_id: UUID, limit: int | None = None, pattern: str | None = None
-        ) -> AsyncGenerator[MetadataEntity, None]:
+        ) -> AsyncGenerator[MetadataEntity]:
             entities = await self.list_entities(
                 limit=limit, pattern=pattern, project_id=project_id
             )
@@ -300,7 +301,7 @@ class Leifwind:
             entity_id: UUID,
             limit: int | None = None,
             pattern: str | None = None,
-        ) -> AsyncGenerator[MetadataField, None]:
+        ) -> AsyncGenerator[MetadataField]:
             fields = await self.list_fields(
                 project_id=project_id,
                 entity_id=entity_id,
@@ -344,7 +345,7 @@ class Leifwind:
 
         async def iter_projects(
             self, limit: int | None = None, pattern: str | None = None
-        ) -> AsyncGenerator[MetadataProject, None]:
+        ) -> AsyncGenerator[MetadataProject]:
             projects = await self.list_projects(limit=limit, pattern=pattern)
             while projects.cursor or projects.objects:
                 for project in projects.objects:
@@ -407,7 +408,7 @@ class Leifwind:
             )
             return DetailResponse.model_validate(response.json())
 
-    def __init__(self, base_url, auth: "TokenProvider | str | None" = None):
+    def __init__(self, base_url, auth: TokenProvider | str | None = None):
         self._base_url = base_url
         self._client = None
         if isinstance(auth, str):
@@ -448,7 +449,7 @@ class Leifwind:
             }
 
         response = await self._client.request(
-            method, path, timeout=None, *args, **kwargs
+            method, path, *args, timeout=None, **kwargs
         )
         response.raise_for_status()
         return response

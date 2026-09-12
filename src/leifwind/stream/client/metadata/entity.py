@@ -88,7 +88,7 @@ class MetadataEntity(MetadataBase):
 
     metadata_type: Literal["metadata_entity"] = "metadata_entity"
     _unique_fields: ClassVar[tuple[str, ...]] = ("project_id", "name")
-    _fields: list["MetadataField"] = []
+    _fields: list[MetadataField] = pydantic.PrivateAttr(default_factory=list)
     project_id: UUID
     name: str = pydantic.Field(pattern=FIELD_NAME_PATTERN)
 
