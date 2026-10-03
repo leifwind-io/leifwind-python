@@ -11,6 +11,13 @@ dependencies = [
     "httpx>=0.28.1",
 ]
 
+[dependency-groups]
+dev = [
+  "pytest>=9.1",
+  "pytest-asyncio>=1.0.0",
+  "pytest-cov>=6.2.1",
+]
+
 [build-system]
 requires = ["hatchling", "hatch-vcs"]
 build-backend = "hatchling.build"
@@ -28,3 +35,13 @@ packages = ["src/leifwind"]
 
 [tool.hatch.build.targets.sdist]
 exclude = [".uv-cache"]
+
+[tool.pytest]
+# Unit tests against httpx's MockTransport, no backend: the backend's suite
+# drives the client against a real one. The coverage floor is a CI gate
+# (ci/gate-inventory.md): the coverage measured when the tests moved here
+# (62.26 %), rounded down (spec §5). Lint is repo:lint's job.
+asyncio_mode = "strict"
+asyncio_default_fixture_loop_scope = "function"
+asyncio_default_test_loop_scope = "function"
+addopts = ["--cov", "leifwind.stream.client", "--cov-fail-under=62"]
