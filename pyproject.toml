@@ -26,9 +26,14 @@ build-backend = "hatchling.build"
 source = "vcs"
 fallback-version = "0.0.0.dev0"
 
+# The package's own tags (spec §5): client/vX.Y.Z, from the Phase 6 baseline
+# client/v0.9.0 on. Never the backend's plain v* tags.
 [tool.hatch.version.raw-options]
 root = "."
+dist_name = "leifwind-stream-client"
 local_scheme = "no-local-version"
+tag_regex = '^v(?P<version>\d+\.\d+\.\d+(?:-rc\.\d+)?)$'
+git_describe_command = ["git", "describe", "--dirty", "--tags", "--long", "--match", "v*"]
 
 [tool.hatch.build.targets.wheel]
 packages = ["src/leifwind"]
