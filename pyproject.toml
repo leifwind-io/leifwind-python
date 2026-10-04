@@ -50,3 +50,35 @@ asyncio_mode = "strict"
 asyncio_default_fixture_loop_scope = "function"
 asyncio_default_test_loop_scope = "function"
 addopts = ["--cov", "leifwind.stream.client", "--cov-fail-under=62"]
+
+# This package's releases (spec §5 "Versioning"): `client/vX.Y.Z`, computed by
+# PSR from the conventional commits that touch path_filters, run from this
+# directory. Compute-only: CI creates the tag and its Release server-side
+# (ci/release_tag.sh); PSR never pushes, commits or writes files.
+[tool.semantic_release]
+tag_format = "client/v{version}"
+commit_parser = "conventional-monorepo"
+major_on_zero = false
+# PSR 10 defaults allow_zero_version to false, which would mint 1.0.0 on the
+# first run (verified with PSR 10.6.1, spec key decision 7).
+allow_zero_version = true
+
+[tool.semantic_release.commit_parser_options]
+# Relative to this directory: the package alone: the wheel ships no lock.
+path_filters = [
+  ".",
+]
+
+[tool.semantic_release.remote]
+# Compute-only never calls the API, but PSR parses the origin URL regardless.
+type = "gitlab"
+
+[tool.semantic_release.branches.main]
+match = "main"
+prerelease = false
+
+# hotfix/* and rc/* mint X.Y.Z-rc.N; only main moves `latest`.
+[tool.semantic_release.branches.prerelease]
+match = "^(hotfix|rc)/"
+prerelease = true
+prerelease_token = "rc"
