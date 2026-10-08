@@ -18,14 +18,17 @@ pip install https://github.com/leifwind-io/leifwind-python/releases/download/v<v
 
 ## Build from source
 
-The version comes from the monorepo's release tags, which the mirror does not
-carry, so a build from a clone names it explicitly (the mirror's tag without
-the `v`):
+The version comes from the release tags, so a clone at a release's tag builds
+that release:
 
 ```
-SETUPTOOLS_SCM_PRETEND_VERSION=<version> uv build
+git clone --branch v<version> https://github.com/leifwind-io/leifwind-python
+cd leifwind-python
+uv build
 uv run --group dev pytest
 ```
+
+A commit after a tag builds the next version as a `.devN` pre-release.
 
 ## Usage
 
