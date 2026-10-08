@@ -45,9 +45,21 @@ git_describe_command = ["git", "describe", "--dirty", "--tags", "--long", "--mat
 [tool.hatch.build.targets.wheel]
 packages = ["src/leifwind"]
 
-# The mirror's GitHub templates are not part of the package.
+# The mirror's GitHub templates are not part of the package, and the sdist goes
+# to the mirror's GitHub Release: what the mirror removes (ci/mirror-exclude.paths)
+# stays out of it too. The CI file is a glob: its name is one the mirror audit
+# rejects in the mirror's own files.
 [tool.hatch.build.targets.sdist]
-exclude = [".uv-cache", ".github"]
+exclude = [
+  ".uv-cache",
+  ".github",
+  ".gitlab-ci.y[m]l",
+  "CLAUDE.md",
+  ".pre-commit-config.yaml",
+  "docs/superpowers",
+  ".superpowers",
+  ".claude",
+]
 
 [tool.pytest]
 # Unit tests against httpx's MockTransport, no backend: the backend's suite
