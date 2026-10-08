@@ -11,6 +11,13 @@ dependencies = [
     "httpx>=0.28.1",
 ]
 
+# The public, read-only mirror of this package (spec §7): its source, its
+# releases (wheel and sdist on each GitHub Release) and its issues.
+[project.urls]
+Source = "https://github.com/leifwind-io/leifwind-python"
+Issues = "https://github.com/leifwind-io/leifwind-python/issues"
+Releases = "https://github.com/leifwind-io/leifwind-python/releases"
+
 [dependency-groups]
 dev = [
   "pytest>=9.1",
